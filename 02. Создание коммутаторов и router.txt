@@ -1,0 +1,52 @@
+Для эмуляции разных сетей и их связи через Internet нужно настроить виртуальные коммутаторы и router
+
+01. Создаем виртуальные коммутаторы
+	Заходим в диспетчер виртуальных коммутаторов
+	Создаем частные виртуальные коммутаторы MainSwitch и FarSwitch
+	Создаем внешний виртуальный коммутатор Internet
+
+02. Создаем диск для HIPER-V
+	Создать -> Жесткий диск
+	Формат VHDX
+	Раздностный
+	Имя: router.vhdx
+	Родительский диск: ws2012r2-base.vhdx
+
+03. Создаем VM
+	Имя: router
+	Поколение 1
+	Память при запуске: 1024
+	Подключение: MainSwitch, FarSwitch, Internet
+	Жесткий диск: Подключить имеющийся router.vhdx
+	
+04. Настройка сетей
+	Interner: IP 192.168.1.222/24, GW 192.168.1.1, DNS 192.168.1.1
+	MainSwitsh: IP 192.168.11.1/24
+	FarSwitch: IP 192.168.22.1/24
+
+05. Устанавливаем роль RRAS (Remote Routing and Access Services)
+	Server Manager / Manage / Add Roles and Futures / Remote Access / Routing
+
+06. Настраиваем в оснастке Routing and Remote Access
+	Правой кнопкой на имени сервера и Configure... / Custom configuration
+	Выбираем NAT и LAN Routing
+	Маршрутизация между LAN уже работает
+	Для включния NAT идем IPv4 / NAT
+		New interface / Internet / Public ... + Ebable ...
+		New interface / MainSwitch / Private
+		New interface / FarSwitch / Private
+
+07. Правим Firewall
+	Оснастка Windows Firewall and Advanced Security / Inbound rules / ...(Echo request ICMPv4 In) включить
+
+После этого маршрутизация и NAT должны заработать
+
+Проверить:
+	ping 192.168.11.1
+	tracert -d 192.168.11.1
+	ping 8.8.8.8
+	tracert -d 8.8.8.8
+
+
+
+

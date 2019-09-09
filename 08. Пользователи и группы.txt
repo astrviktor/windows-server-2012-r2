@@ -1,0 +1,81 @@
+Пользователи
+
+В нашем тестовом примере 15 пользователей. 
+В данный момент для продолжения процесса добавим их руками.
+Но в будущем так лучше не делать, для добавления использовать скрипт PowerShell по .csv файлу
+
+Группы
+
+Есть две стратегии распределения пользователей по группам: AGDLP(один домен) и AG[U]DLP(один лес, много доменов)
+	A - account (SID)
+	G - global group
+	[U] - universal group
+	DL - domain local group
+	P - permission
+
+Стратегия AGDLP
+	- Разбиение пользователей A на глобальные группы G (обычно по признаку отдела)
+	- Добавление глобальных групп G в доменные локальные группы DL
+	- Выдача разрешений P на доменные локальные группы DL
+
+Стратегия AG[U]DLP
+	- Разбиение пользователей A на глобальные группы G (обычно по признаку отдела)
+	- Добавление глобальных групп G в универсальные группы U
+	- Добавление универсальных групп U в доменные локальные группы DL
+	- Выдача разрешений P на доменные локальные группы DL
+
+Преимущества этих стратегий:
+	- Пользователя помещяем в соответствующую группу, и он получает все разрешения этой группы
+	- Смотрим доменную локальную группу, и становится понятно кто имеет доступ к конкретному ресурсу
+
+
+Структура будет слудеющей:
+
+Exploring(OU)
+	- Users(OU)
+		- Directors(OU)
+			- User1(User)
+			- ...
+			- UserN(User)
+			- Directors Users(Security Global Group)
+		- Accounting(OU)
+			- ...
+		- Sales(OU)
+			- ...
+		- IT(OU)
+			- ...
+	- Resource Groups(OU)
+		- Directors ReadOnly(Domain local)
+		- Directors Modify(Domain local)
+		- Directors FullControl(Domain local)
+
+		- Accounting ReadOnly(Domain local)
+		- Accounting Modify(Domain local)
+		- Accounting FullControl(Domain local)
+
+		- Sales ReadOnly(Domain local)
+		- Sales Modify(Domain local)
+		- Sales FullControl(Domain local)
+
+		- IT ReadOnly(Domain local)
+		- IT Modify(Domain local)
+		- IT FullControl(Domain local)
+
+Примечание: OU - Organization Unit
+
+Теперь добавляем в Resource Groups соответствующие группы пользователей:
+	Directors Users -> Directors Modify
+	Accounting Users -> Accounting Modify
+	Sales Users -> Sales Modify
+	IT Users -> IT Modify
+
+Это основное, можно добавить другие группы пользователей в необходимые Resource Group
+Например, Director Users во все группы *** ReadOnly, и т.д.
+
+
+
+
+
+
+
+

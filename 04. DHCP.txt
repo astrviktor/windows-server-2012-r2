@@ -1,0 +1,21 @@
+DHCP сервера
+
+Обычно DHCP не создается на AD DC, но для учебного примера пойдет.
+
+01. Добавляем на dc1, dc2, dc3 DHCP-сервер
+	Server Manager / Manage / Add Roles and Futures / Active Derictory Domain Services
+
+Для удобства можем добавить все DHCP-серверы в одну оснастку на dc1
+
+02. Настраиваем DHCP
+	dc1 -> IPv4 / NewScoup (192.168.11.100/24 - 192.168.11.119/24) router 192.168.11.1, 
+		DNS 192.168.11.2, 192.168.11.3, 192.168.22.2, DNS Domain Name - ecorp.local
+	dc2 -> IPv4 / NewScoup (192.168.11.120/24 - 192.168.11.139/24) router 192.168.11.1, 
+		DNS 192.168.11.2, 192.168.11.3, 192.168.22.2, DNS Domain Name - ecorp.local	
+	dc3 -> IPv4 / NewScoup (192.168.22.100/24 - 192.168.22.119/24) router 192.168.22.1, 
+		DNS 192.168.11.2, 192.168.11.3, 192.168.22.2, DNS Domain Name - ecorp.local
+
+	Scope / Properties / DNS убрать Enable DNS dynamic update для безопасности
+
+Так как в одной подсети находятся 2 DHCP сервера, нужно на втором поставить задержку
+	Scope / Properties / Advanced / Subnet Delay 100 ms	
