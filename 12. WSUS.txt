@@ -1,1 +1,62 @@
-!!! Under Construction !!!
+WSUS - Windows Server Update Services
+
+Нужен для того, чтобы скачивать на себя все интересующие нас обновления для нужных OS, 
+выступать сервером обновлений для пользовательских компьютеров, собирать отчеты по обновлениям.
+
+-------------
+1. Установить
+-------------
+Для начала нужно отключить IE Enhanced Security Configuration - Server Manager / Local Server
+
+Menedge / Add Roles and Features / Windows Server Update Services
+Выбрать место для скачивания обновлений. Для примера можно сделать папку C:\WSUS
+
+------------
+2. Настройка
+------------
+
+Tools / Windows Server Update Services
+
+Ставим отказ в участии в улучшении качества Microsoft
+
+Из WSUS можно собирать топологию серверов, в качестве источника Upstream ... нужно выбрать Microsoft Update или другой WSUS сервер.
+
+Обновление конфигурации происходит ОЧЕНЬ долго.
+
+Далее выбор языков скачиваемых обновлений (Russian, English)
+Далее выбор продуктов. Выбираем Windows Server 2012 r2 и Windows 7
+Далее выбор классов обновлений - отметить, что нужно
+Синхронизация - вручную или по расписанию. Оставим вручную.
+Далее, начальную синхронизацию лучше убрать, сделать позже.
+
+Начальная настройка закончена.
+Для отчетов понадобится установить Microsoft Report Viewer, нужно зайти в отчеты и там предложение установить.
+
+
+Сделаем синхронизацию
+	Sinhronization / Sinhronize now
+
+Для применения GPO по обновлению на dc нужно в оснастке Users and Computers 
+перенести нужные компьютеры в Exploring / Computers.
+
+Заходим в оснастку Group Policy Management и на Exploring / Computers делаем новую GPO:
+
+1. Нужно сказать компьютерам что они должны зарегистрироваться на WSUS сервере.
+Для этого делаем новый GPO с именем WSUS policy / Edit policy
+	- Идем в раздел Computer Configuration / Policies / Administrative Templates / Windows Components / Windows Update / 
+	- Настраиваем Specify intranet microsoft update service location
+	- Делаем Enabled и 2 пути http://rdswsus.ecorp.local:8530 (Сервер для обновлений и сервер для отчетов)
+
+2. Настройки на клиенте
+	- заходим под администратором
+	- зайти в cmd и проверить доступность портов - cmd и telnet rdswsus.ecorp.local 8530
+	- нужно добавить программу telnet - под администратором -  программы и компоненты / программы / 
+		включение или отключение компонентов windows / telnet клиент
+	- пустое окно - порт открыт
+	- опновляем политики gpupdate /force
+	- проверяем политики gpresult /R видим WSUS policy
+	- команда windows update automatic update client -  wuauclt /detectnow - форсирование регистрации на WSUS
+	- команда wuauclt /reportnow - форсирование отчета на WSUS
+	- идем на WSUS сервер и проверяем что компьютер появился
+
+!!! ИИИ пока не работает... нужно разбираться дальше

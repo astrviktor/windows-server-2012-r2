@@ -12,3 +12,6 @@
 	Память при запуске: 1024
 	Подключение: MainSwitch, FarSwitch, Internet
 	Жесткий диск: Подключить имеющийся ubuntu-router.vhdx
+
+
+!!! Under Construction !!!
